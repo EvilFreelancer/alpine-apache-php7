@@ -4,13 +4,17 @@ FROM alpine:3.7
 RUN apk update \
  && apk add \
     bash curl ca-certificates openssl openssh git tzdata openntpd nano \
-    apache2 php7-apache2 php7 php7-phar php7-json php7-iconv php7-openssl
+    apache2 php7-apache2 php7
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 # Setup php modules
 RUN apk add --no-cache \
+    php7-phar \
+    php7-json \
+    php7-iconv \
+    php7-openssl \
     php7-ftp \
     php7-xdebug \
     php7-mcrypt \
@@ -45,13 +49,13 @@ RUN apk add --no-cache \
 
 # Add apache to run and configure
 RUN mkdir /run/apache2 \
- && sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf
- && sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf
- && sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf
- && sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf
- && sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf
- && sed -i "s#^DocumentRoot \".*#DocumentRoot \"/app/public\"#g" /etc/apache2/httpd.conf
- && sed -i "s#/var/www/localhost/htdocs#/app/public#" /etc/apache2/httpd.conf
+ && sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf \
+ && sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
+ && sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf \
+ && sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf \
+ && sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf \
+ && sed -i "s#^DocumentRoot \".*#DocumentRoot \"/app/public\"#g" /etc/apache2/httpd.conf \
+ && sed -i "s#/var/www/localhost/htdocs#/app/public#" /etc/apache2/httpd.conf \
  && printf "\n<Directory \"/app/public\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
 
 RUN mkdir -p /app/public \
