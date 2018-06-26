@@ -130,7 +130,7 @@ services:
       - ./:/app
 ```
 
-Then run...
+Then run
 
 ```bash
 docker-compose up -d
@@ -162,7 +162,7 @@ RUN apk update \
  && chown -R apache:apache /app
 ```
 
-If you want install some additional extension which not in list:
+If you want install some additional extension which not already installed:
 
 ```
 FROM evilfreelancer/alpine-apache-php7
@@ -180,3 +180,11 @@ RUN apk update \
 
 You can place them in the /app folder, but your main `index.php` file must be in /app/public.
 This allows you to have your src files and other outside the public directory.
+
+### Important folders and files inside container
+
+- Apache WebRoot - /app/public/
+- Apache Configs - /etc/apache2/
+- Apache Logs - /var/log/apache2/
+- Composer - /usr/local/bin/composer
+- PHP.ini - /etc/php7/php.ini
