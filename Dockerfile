@@ -2,15 +2,9 @@ FROM alpine:3.7
 
 # Install basics first
 RUN apk update \
- && apk add \
+ && apk add --no-cache \
     bash curl ca-certificates openssl openssh git tzdata openntpd nano \
-    apache2 php7-apache2 php7
-
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
-
-# Setup php modules
-RUN apk add --no-cache \
+    apache2 php7-apache2 php7 \
     php7-phar \
     php7-json \
     php7-iconv \
@@ -47,8 +41,11 @@ RUN apk add --no-cache \
     php7-exif \
     php7-simplexml
 
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+
 # Add apache to run and configure
-RUN mkdir /run/apache2 \
+RUN mkdir -p /run/apache2 \
  && sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf \
  && sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf \
  && sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf \
@@ -58,13 +55,12 @@ RUN mkdir /run/apache2 \
  && sed -i "s#/var/www/localhost/htdocs#/app/public#" /etc/apache2/httpd.conf \
  && printf "\n<Directory \"/app/public\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
 
+ADD ["entrypoint.sh", "/"]
+
 RUN mkdir -p /app/public \
  && chown -R apache:apache /app \
  && chmod -R 755 /app \
- && mkdir /bootstrap
-
-ADD ["entrypoint.sh", "/"]
-RUN chmod +x /entrypoint.sh
+ && chmod +x /entrypoint.sh
 
 EXPOSE 80
 ENTRYPOINT ["/entrypoint.sh"]
