@@ -1,5 +1,9 @@
 FROM alpine:3.7
 
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.8/main' > /etc/apk/repositories \ 
+    && echo 'http://dl-cdn.alpinelinux.org/alpine/v3.8/community' >> /etc/apk/repositories \
+    && apk upgrade -U -a
+
 # Install basics first
 RUN apk update \
  && apk add --no-cache \
