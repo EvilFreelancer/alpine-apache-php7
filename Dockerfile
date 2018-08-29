@@ -1,12 +1,7 @@
-FROM alpine:3.7
-
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.8/main' > /etc/apk/repositories \ 
-    && echo 'http://dl-cdn.alpinelinux.org/alpine/v3.8/community' >> /etc/apk/repositories \
-    && apk upgrade -U -a
+FROM alpine:3.8
 
 # Install basics first
-RUN apk update \
- && apk add --no-cache \
+RUN apk add --update --no-cache \
     bash curl ca-certificates openssl openssh git tzdata openntpd nano \
     apache2 php7-apache2 php7 \
     php7-phar \
