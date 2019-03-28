@@ -2,7 +2,7 @@ FROM alpine:3.9
 
 # Install basics first
 RUN apk add --update --no-cache \
-    bash curl ca-certificates openssl openssh git tzdata openntpd nano \
+    bash curl ca-certificates openssl openssh-keygen openssh-client git tzdata openntpd nano \
     apache2 php7-apache2 php7 \
     php7-phar \
     php7-json \
