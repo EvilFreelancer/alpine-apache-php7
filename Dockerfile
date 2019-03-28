@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.9
 
 # Install basics first
 RUN apk add --update --no-cache \
