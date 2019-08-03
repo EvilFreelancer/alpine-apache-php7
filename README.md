@@ -6,10 +6,13 @@ loading in the various extensions along the way (see Dockerfile for full list).
 Should allow you to get going with a full LAP stack and support for DB via linked container (such as mysql)
 with ease, allowing you to fine tune various aspects of the server and php via environment variables.
 
-This project is partialy taken from [here](https://github.com/ulsmith/alpine-apache-php7), but with
+This project is partially taken from [here](https://github.com/ulsmith/alpine-apache-php7), but with
 some stabilization patches (all packages installed only from stable branch of Alpine repository).
 
-## Included in this image
+<details>
+<summary>
+  <i>List of packages included in this image</i>
+</summary>
 
 bash, apache2, php7, php7-apache2, git, tzdata, openntpd, nano,
 curl, ca-certificates, openssl, openssh-keygen, openssh-client
@@ -19,7 +22,12 @@ php7-zip, php7-mysqli, php7-sqlite3, php7-pdo_pgsql, php7-bcmath, php7-gd, php7-
 php7-pdo_sqlite, php7-gettext, php7-xmlreader, php7-xmlrpc, php7-bz2, php7-iconv, php7-pdo_dblib,
 php7-curl, php7-ctype, php7-session, php7-redis, php7-fileinfo
 
-## Environment Variables
+</details>
+
+<details>
+<summary>
+  <i>List of all available environment variables</i>
+</summary>
 
 Various env vars can be set at runtime via your docker command or docker-compose environment section:
 
@@ -105,40 +113,75 @@ __PHP_SESSION_COOKIE_HTTPONLY:__ Maps to php.ini 'session.cookie_httponly'
 
 __PHP_XDEBUG_ENABLED:__ Turns on xdebug (which is not for production really)
 
+</details>
+
 ## Usage
 
-To use this image directly, you can use a docker-compose file to keep things nice and simple:
+### Docker Compose
+
+You can create a `docker-compose.yml` file to keep things nice and simple:
 
 ```yml
-version: "2"
+version: "3"
 
 services:
-  myservice:
+
+  mariadb:
+    restart: unless-stopped
+    image: mariadb:10
+    ports:
+    # Database port, will be mapped to localhost interface only
+    - 127.0.0.1:3308:3306
+    volumes:
+    # Path to folder of local filesystem with database files
+    - ./databases/mariadb:/var/lib/mysql
+    environment:
+    # Parameters which will be used in application
+    - MYSQL_ROOT_PASSWORD=ive_got_no_roots
+    - MYSQL_ROOT_HOST=%
+    - MYSQL_DATABASE=somedatabase
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=user_pass
+
+  application:
     image: evilfreelancer/alpine-apache-php7
     environment:
-      # Datatabase parameters for app
-      - DB_HOST=mysql
-      - DB_NAME=somedatabase
-      - DB_USER=user
-      - DB_PASS=user_pass
-      # Settings of php.ini
-      - PHP_SHORT_OPEN_TAG=On
-      - PHP_ERROR_REPORTING=E_ALL
-      - PHP_DISPLAY_ERRORS=On
-      - PHP_HTML_ERRORS=On
-      - PHP_XDEBUG_ENABLED=true
+    # Database parameters of app
+    - DB_HOST=mariadb
+    - DB_NAME=somedatabase
+    - DB_USER=user
+    - DB_PASS=user_pass
+    # Settings of php.ini
+    - PHP_SHORT_OPEN_TAG=On
+    - PHP_ERROR_REPORTING=E_ALL
+    - PHP_DISPLAY_ERRORS=On
+    - PHP_HTML_ERRORS=On
+    - PHP_XDEBUG_ENABLED=true
+    ports:
+    # Web-server HTTP port, will be mapped to all network interfaces
+    - 80:80
     volumes:
-      - ./:/app
+    # Folder in which will be "public" folder with index.php
+    # and other sources of application
+    - ./application:/app
 ```
 
-Then run
+Where:
+
+* mariadb - Is a container with SQL database
+* application - Container based on `evilfreelancer/alpine-apache-php5` image with your application
+
+In folder `./application` will be your application, it should have `./application/public` subfolder with `index.php` because this container is will use `/app/public` path as webroot of Apache.
+
+Then run command below, it will start composition of containers:
 
 ```bash
 docker-compose up -d
 ```
 
-If you would like to add to this, expand on this, maybe you don't want to map your volume and want to copy files for a
-production system and install packages via composer, then you can create your own Dockerfile based on this image:
+### Docker
+
+If you would like to add some files into this container then you can create your own `Dockerfile` based on this image:
 
 ```
 FROM evilfreelancer/alpine-apache-php7

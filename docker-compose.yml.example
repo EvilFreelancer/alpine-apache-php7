@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+
+  mariadb:
+    restart: unless-stopped
+    image: mariadb:10
+    ports:
+    # Database port will be open only on localhost
+    - 127.0.0.1:3308:3306
+    volumes:
+    # Path to folder of local filesystem with database files
+    - ./databases/mariadb:/var/lib/mysql
+    environment:
+    # Parameters which will be used in application
+    - MYSQL_ROOT_PASSWORD=ive_got_no_roots
+    - MYSQL_ROOT_HOST=%
+    - MYSQL_DATABASE=somedatabase
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=user_pass
+
+  application:
+    image: evilfreelancer/alpine-apache-php7
+    environment:
+    # Database parameters of app
+    - DB_HOST=mariadb
+    - DB_NAME=somedatabase
+    - DB_USER=user
+    - DB_PASS=user_pass
+    # Settings of php.ini
+    - PHP_SHORT_OPEN_TAG=On
+    - PHP_ERROR_REPORTING=E_ALL
+    - PHP_DISPLAY_ERRORS=On
+    - PHP_HTML_ERRORS=On
+    - PHP_XDEBUG_ENABLED=true
+    volumes:
+    # Folder in which will be "public" folder with index.php
+    # and other sources of application
+    - ./application:/app
