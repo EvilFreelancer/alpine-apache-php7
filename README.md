@@ -169,7 +169,7 @@ services:
 Where:
 
 * mariadb - Is a container with SQL database
-* application - Container based on `evilfreelancer/alpine-apache-php5` image with your application
+* application - Container based on `evilfreelancer/alpine-apache-php7` image with your application
 
 In folder `./application` will be your application, it should have `./application/public` subfolder with `index.php` because this container is will use `/app/public` path as webroot of Apache.
 
