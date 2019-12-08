@@ -39,7 +39,8 @@ RUN apk add --update --no-cache \
     php7-redis \
     php7-exif \
     php7-simplexml \
-    php7-fileinfo
+    php7-fileinfo \
+    php7-pecl-xdebug
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
