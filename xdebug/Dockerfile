@@ -63,5 +63,7 @@ RUN mkdir -p /app/public \
  && chmod -R 755 /app \
  && chmod +x /entrypoint.sh
 
+ADD xdebug.ini /etc/php7/conf.d/
+
 EXPOSE 80
 ENTRYPOINT ["/entrypoint.sh"]
