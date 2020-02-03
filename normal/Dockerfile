@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 
 # Install basics first
 RUN apk add --update --no-cache \
@@ -9,7 +9,6 @@ RUN apk add --update --no-cache \
     php7-iconv \
     php7-openssl \
     php7-ftp \
-    php7-xdebug \
     php7-mcrypt \
     php7-mbstring \
     php7-soap \
@@ -39,7 +38,8 @@ RUN apk add --update --no-cache \
     php7-redis \
     php7-exif \
     php7-simplexml \
-    php7-fileinfo
+    php7-fileinfo \
+    php7-pecl-imagick
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
