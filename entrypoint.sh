@@ -67,12 +67,17 @@ if [ ! -z "$PHP_SESSION_COOKIE_HTTPONLY" ]; then sed -i "s/\;\?\\s\?session.cook
 if [ ! -z "$PHP_XDEBUG_ENABLED" ]
     then
         echo "Enable XDebug..."
-        echo 'zend_extension=/usr/lib/php7/modules/xdebug.so' >> /etc/php7/php.ini;
-        echo 'xdebug.coverage_enable=On' >> /etc/php7/php.ini;
-        echo 'xdebug.remote_enable=1' >> /etc/php7/php.ini;
-        echo 'xdebug.remote_connect_back=1' >> /etc/php7/php.ini;
-        echo 'xdebug.remote_log=/tmp/xdebug.log' >> /etc/php7/php.ini;
+        echo 'zend_extension=xdebug.so' >> /etc/php7/php.ini;
+        echo '[xdebug]' >> /etc/php7/php.ini;
+        echo 'xdebug.remote_enable=true' >> /etc/php7/php.ini;
         echo 'xdebug.remote_autostart=true' >> /etc/php7/php.ini;
+        echo 'xdebug.remote_log=/tmp/xdebug.log' >> /etc/php7/php.ini;
+        echo 'xdebug.remote_connect_back=true' >> /etc/php7/php.ini;
+        echo 'xdebug.idekey=PHPSTORM' >> /etc/php7/php.ini;
+        echo 'xdebug.profiler_enable=true' >> /etc/php7/php.ini;
+        echo 'xdebug.max_nesting_level=700' >> /etc/php7/php.ini;
+        echo 'xdebug.remote_host=172.17.0.1' >> /etc/php7/php.ini;
+        echo 'xdebug.coverage_enable=true' >> /etc/php7/php.ini;
 fi
 
 # Start (ensure apache2 PID not left behind first) to stop auto start crashes if didn't shut down properly
